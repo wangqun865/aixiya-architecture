@@ -1,0 +1,41 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: aixiya-Gateway-wq
+  cloud:
+    nacos:
+      config:
+        enabled: false
+        #server-addr: 117.78.37.119:80
+        #group: DEFAULT_GROUP
+        #prefix: aixiya-Gateway
+        #file-extension: yaml
+        #namespace: aixiyacloud-dev
+        #enabled: false
+      discovery:
+        server-addr: 117.78.37.119:81
+        namespace: dpncloud-dev
+  boot:
+    admin:
+      client:
+        instance:
+          prefer-ip: true
+
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          actuate:
+            endpoint:
+              EndpointId: error
+        data:
+          convert:
+            CustomConversions: error
+    com:
+      alibaba:
+        cloud:
+          nacos:
+            client:
+              NacosPropertySourceBuilder: error

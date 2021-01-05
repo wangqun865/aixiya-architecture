@@ -1,0 +1,89 @@
+server:
+  port: 8401
+spring:
+  cloud:
+    gateway:
+      httpserver:
+        wiretap: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        - id: auth-center
+          uri: lb://auth-center
+          predicates:
+            - Path=/auth/**
+          filters:
+            - name: Hystrix
+              args:
+                name: authfallback
+                fallbackUri: forward:/fallback/auth-center
+        - id: user-center
+          uri: lb://user-center
+          predicates:
+            - Path=/user/**
+            #- Path=/system/**
+          filters:
+            - name: Hystrix
+              args:
+                name: userfallback
+                fallbackUri: forward:/fallback/user-center
+        - id: foundation-center
+          uri: lb://foundation-center
+          predicates:
+            - Path=/foundation/**
+          filters:
+            - name: Hystrix
+              args:
+                name: funcfallback
+                fallbackUri: forward:/fallback/foundation-center
+      loadbalancer:
+        use404: true
+      default-filters:
+        - StripPrefix=1
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoReactiveAutoConfiguration,org.springframework.boot.autoconfigure.data.mongo.MongoReactiveRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+  redis:
+    database: 3
+    host: 172.0.0.1
+    port: 6379
+    lettuce:
+      pool:
+        min-idle: 8
+        max-idle: 500
+        max-active: 2000
+hystrix:
+  threadpool:
+    default:
+      coreSize: 1
+      maxQueueSize: -1
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: 60000
+    socialfallback:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+ribbon:
+  eager-load:
+    enabled: true
+management:
+  endpoint:
+    health:
+      show-details: ALWAYS
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+logging:
+  level:
+    org.springframework.cloud.gateway: trace
