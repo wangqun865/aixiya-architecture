@@ -2,20 +2,14 @@ spring:
   main:
     allow-bean-definition-overriding: true
   application:
-    name: aixiya-Gateway-wq
+    name: aixiya-gateway
   cloud:
     nacos:
       config:
         enabled: false
-        #server-addr: 117.78.37.119:80
-        #group: DEFAULT_GROUP
-        #prefix: aixiya-Gateway
-        #file-extension: yaml
-        #namespace: aixiyacloud-dev
-        #enabled: false
       discovery:
-        server-addr: 117.78.37.119:81
-        namespace: dpncloud-dev
+        server-addr: # yours
+        namespace: # yours
   boot:
     admin:
       client:
